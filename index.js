@@ -8,7 +8,11 @@ const cors = require("cors"); // permet d'autoriser ou non les demandes provenan
 const app = express();
 app.use(express.json());
 
-app.use(cors);
+// console.log("🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥");
+// console.log("🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥");
+// console.log("🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥");
+
+app.use(cors());
 
 mongoose.set("strictQuery", false);
 mongoose.connect(process.env.MONGO_URI);
@@ -43,6 +47,6 @@ app.all("*", (req, res) => {
 
 // (après les déclarations des routes) Démarrer le serveur :
 // Pour écouter les requêtes du port 3000
-app.listen(process.env.PORT, () => {
+app.listen(4000, () => {
   console.log("Server started 🚀");
 });
