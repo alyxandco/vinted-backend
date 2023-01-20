@@ -30,6 +30,12 @@ const offersRoutes = require("./routes/offers");
 app.use(userRoutes);
 app.use(offerRoutes);
 app.use(offersRoutes);
+
+// Ceci est une route pour dire bonjour
+app.get("/", (req, res) => {
+  res.json("Bienvenue sur mon serveur");
+});
+
 //  pour gérer les pages introuvables :
 app.all("*", (req, res) => {
   res.status(404).json({ message: "wrong route !" });
