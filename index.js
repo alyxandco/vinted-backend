@@ -8,19 +8,15 @@ const cors = require("cors"); // permet d'autoriser ou non les demandes provenan
 const app = express();
 app.use(express.json());
 
-// console.log("🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥");
-// console.log("🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥");
-// console.log("🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥");
-
 app.use(cors());
 
 mongoose.set("strictQuery", false);
-mongoose.connect(process.env.MONGO_URI);
+mongoose.connect(process.env.MONGODB_URI);
 
 //! ID cloudinary :
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
   secure: true,
 });
@@ -28,12 +24,10 @@ cloudinary.config({
 // Import de mes fichiers de routes
 const userRoutes = require("./routes/user");
 const offerRoutes = require("./routes/offer");
-const offersRoutes = require("./routes/offers");
 
 // Je demande à mon serveur d'utiliser les routes importées
 app.use(userRoutes);
 app.use(offerRoutes);
-app.use(offersRoutes);
 
 // Ceci est une route pour dire bonjour
 app.get("/", (req, res) => {

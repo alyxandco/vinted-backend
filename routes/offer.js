@@ -42,8 +42,8 @@ router.post(
       });
       await newOffer.save();
       const offerId = newOffer._id;
-      // console.log(newOffer._id);
       const pictureToUpload = req.files.picture;
+
       //envoi à Cloudinary du Buffer converti en Base64
       const result = await cloudinary.uploader.upload(
         convertToBase64(pictureToUpload),
@@ -51,12 +51,11 @@ router.post(
           folder: `/Vinted/offers/${offerId}`,
         }
       );
-      let newOfferToShow = await Offer.findByIdAndUpdate(newOffer._id, {
+      let newOfferToShow = await Offer.findByIdAndUpdate(offerId, {
         product_image: result,
       });
-      // console.log(newOffer._id);
       newOfferToShow = await Offer.findOne({
-        owner: req.user,
+        _id: offerId,
       }).populate("owner");
       res.json(newOfferToShow);
     } catch (error) {
@@ -64,6 +63,75 @@ router.post(
     }
   }
 );
+
+router.get("/offers", async (req, res) => {
+  try {
+    // title=pantalon&priceMin=10&priceMax=1000&sort=price-asc&page=2
+
+    // const results = await Offer.find({
+    //   product_name: /vert/i,
+    //   product_price: { $gte: 20, $lte: 200 },
+    // })
+    //   .sort({ product_price: -1 || 1 })
+    //   .select("product_name product_price");
+
+    const { title, description, priceMin, priceMax, sort, page } = req.query;
+
+    const filters = {};
+    if (title) {
+      filters.product_name = new RegExp(title, "i");
+    }
+    if (priceMin) {
+      filters.product_price = { $gte: Number(priceMin) };
+    }
+
+    if (priceMax) {
+      if (filters.product_price) {
+        filters.product_price.$lte = Number(priceMax);
+      } else {
+        filters.product_price = { $lte: Number(priceMax) };
+      }
+    }
+
+    const sortFilter = {};
+    if (sort === "price-asc") {
+      sortFilter.product_price = "asc";
+    } else if (sort === "price-desc") {
+      sortFilter.product_price = "desc";
+    }
+
+    const limit = 3; // 3 est le nb max d'offres affichées par page
+    let numberToSkip = 1;
+    if (page) numberToSkip = Number(page);
+    const skip = (numberToSkip - 1) * limit;
+
+    const offers = await Offer.find(filters)
+      .sort(sortFilter)
+      .skip(skip)
+      .limit(limit);
+    // .populate("owner", "account");
+    // .select("product_name product_price -_id");
+
+    const count = await Offer.countDocuments(filters);
+    const response = { count: count, offers: offers };
+    res.json(response);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.get("/offer/:id/:name", async (req, res) => {
+  try {
+    console.log(req.params);
+    const offerToShow = await Offer.findById(req.params.id).populate(
+      "owner",
+      "account"
+    );
+    res.json(offerToShow);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
 
 module.exports = router;
 

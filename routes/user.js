@@ -34,7 +34,7 @@ router.post("/user/signup", fileupload(), async (req, res) => {
 
     // J'enregistre en BDD, le mail, le username, le salt, le hash et le token, Je dois répondre au client tout SAUF le salt et le hash
     const { email, newsletter, username } = req.body;
-    console.log(req.body, req.files);
+    // console.log(req.body, req.files);
     if (
       !username ||
       !email ||
