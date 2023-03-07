@@ -1,4 +1,5 @@
 const express = require("express");
+const router = express.Router();
 const cors = require("cors");
 const stripe = require("stripe")(process.env.STRIPE_API_SECRET);
 
@@ -26,3 +27,4 @@ router.post("/payment", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+module.exports = router;

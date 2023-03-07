@@ -24,10 +24,12 @@ cloudinary.config({
 // Import de mes fichiers de routes
 const userRoutes = require("./routes/user");
 const offerRoutes = require("./routes/offer");
+const paymentRoutes = require("./routes/payment");
 
 // Je demande à mon serveur d'utiliser les routes importées
 app.use(userRoutes);
 app.use(offerRoutes);
+app.use(paymentRoutes);
 
 // Ceci est une route pour dire bonjour
 app.get("/", (req, res) => {
