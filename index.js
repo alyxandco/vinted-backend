@@ -41,6 +41,6 @@ app.all("*", (req, res) => {
 
 // (après les déclarations des routes) Démarrer le serveur :
 // Pour écouter les requêtes du port 3000
-app.listen(process.env.PORT, () => {
+app.listen(process.env.PORT | 4000, () => {
   console.log("Server started 🚀");
 });

@@ -38,7 +38,6 @@ router.post(
           { EMPLACEMENT: city },
         ],
         owner: req.user,
-        // product_image: result,
       });
       await newOffer.save();
       const offerId = newOffer._id;
@@ -83,16 +82,18 @@ router.get("/offers", async (req, res) => {
     }
     if (priceMin) {
       filters.product_price = { $gte: Number(priceMin) };
+      // ou filters.product_price = {$gte: req.query.priceMin}
     }
 
     if (priceMax) {
       if (filters.product_price) {
         filters.product_price.$lte = Number(priceMax);
+        // ou filters.product_price.$lte = req.query.priceMax;
       } else {
         filters.product_price = { $lte: Number(priceMax) };
+        // ou filters.product_price = {$lte: req.query.priceMax}Ò
       }
     }
-
     const sortFilter = {};
     if (sort === "price-asc") {
       sortFilter.product_price = "asc";
@@ -108,9 +109,8 @@ router.get("/offers", async (req, res) => {
     const offers = await Offer.find(filters)
       .sort(sortFilter)
       .skip(skip)
-      .limit(limit);
-    // .populate("owner", "account");
-    // .select("product_name product_price -_id");
+      .limit(limit)
+      .populate("owner", "account");
 
     const count = await Offer.countDocuments(filters);
     const response = { count: count, offers: offers };
@@ -120,7 +120,7 @@ router.get("/offers", async (req, res) => {
   }
 });
 
-router.get("/offer/:id/:name", async (req, res) => {
+router.get("/offer/:id", async (req, res) => {
   try {
     console.log(req.params);
     const offerToShow = await Offer.findById(req.params.id).populate(
@@ -133,6 +133,20 @@ router.get("/offer/:id/:name", async (req, res) => {
   }
 });
 
+router.delete("/offer/delete/:id", isAuthenticated, async (req, res) => {
+  try {
+    console.log(req.params.id);
+    await cloudinary.api.delete_all_resources(
+      `/Vinted/offers/${req.params.id}`
+    );
+    await cloudinary.api.delete_folder(`/Vinted/offers/${req.params.id}`);
+    offerToDelete = await Offer.findByIdAndDelete(req.params.id);
+    res.status(200).json("offre supprimée !");
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 module.exports = router;
 
-//udpadate méthode mongoose markModified pour modification et sauvegarde de tableaux
+//udpdate méthode mongoose markModified pour modification et sauvegarde de tableaux

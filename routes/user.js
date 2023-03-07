@@ -55,10 +55,14 @@ router.post("/user/signup", fileupload(), async (req, res) => {
       salt: salt,
       hash: hash,
       token: token,
-      // avatar:,
     });
+
     await newUser.save();
+    // res.json(newUser);
+    // console.log(newUser);
     const userId = newUser._id;
+    const userName = newUser.account.username;
+
     const profilePictureToUpload = req.files.picture;
     //envoi à Cloudinary du Buffer converti en Base64
     const result = await cloudinary.uploader.upload(
@@ -68,9 +72,8 @@ router.post("/user/signup", fileupload(), async (req, res) => {
       }
     );
     let newUserToShow = await User.findByIdAndUpdate(newUser._id, {
-      account: { avatar: result },
+      account: { username: userName, avatar: result },
     });
-    // console.log(newUserToShow.avatar);
     res.json(newUserToShow);
   } catch (error) {
     res.status(400).json({ error: error.message });
