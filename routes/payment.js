@@ -13,16 +13,16 @@ router.post("/payment", async (req, res) => {
     // Je reçois un token du front
     const stripeToken = req.body.stripeToken;
     // Je fais une requête à stripe pour créer un paiement
-    const responseFromStripe = await stripe.charges.create({
-      amount: 200,
+    const response = await stripe.charges.create({
+      amount: req.body.amount,
       currency: "eur",
-      description: "Desciption produit",
+      description: req.body.title,
       source: stripeToken,
     });
     // Si le paiement est effectué, on met à jour l'offre et on renvoie au front le fait que tout s'est bien passé
-    console.log(responseFromStripe);
+    console.log(response);
     // Je renvoie au client le status de la réponse de stripe
-    res.json(responseFromStripe.status);
+    res.json(response.status);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
